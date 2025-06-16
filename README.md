@@ -3,7 +3,7 @@
 RESTful API для онлайн магазина
 
 ## Базовый URL
-`hhtps:`
+`api-for-shop.vercel.app`
 
 ## Эндпоинты
 
