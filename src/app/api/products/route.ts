@@ -1,48 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import products from "../../../data/products.json";
+import { ProductsArray, Product } from "@/types/productsTypes";
 
-type ProductsArray = Product[];
-
-interface Product {
-  id: number;
-  title: string;
-  description?: string;
-  price: number;
-  category?: string;
-  discountPercentage?: number;
-  rating?: number;
-  stock?: number;
-  tags?: string[];
-  brand?: string;
-  sku?: string;
-  weight?: number;
-  dimensions?: {
-    width: number;
-    height: number;
-    depth: number;
-  };
-  warrantyInformation?: string;
-  shippingInformation?: string;
-  availabilityStatus?: string;
-  reviews?: {
-    rating?: number;
-    comment?: string;
-    date?: string;
-    reviewerName?: string;
-    reviewerEmail?: string;
-  }[];
-  returnPolicy?: string;
-  minimumOrderQuantity?: number;
-  meta?: {
-    createdAt?: string;
-    updatedAt?: string;
-    barcode?: string;
-    qrCode?: string;
-  };
-  images?: [string];
-  thumbnail?: string;
-}
 
 const productShema = z.object({
   title: z.string().min(2, "Название слишком короткое"),
@@ -52,26 +12,8 @@ const productShema = z.object({
 
 const productsArray: ProductsArray = products.products as Product[];
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const mode = searchParams.get("mode");
-  if (mode === "count-categories") {
-    const uniqueCategories = [
-      ...new Set(
-        productsArray
-          .map((product) => product.category)
-          .filter(Boolean)
-      )
-    ]
-    return NextResponse.json({categories: uniqueCategories})
-  }
-
-  const category = searchParams.get("category");
-  const filteredProducts = category
-    ? productsArray.filter((p) => p.category === category)
-    : productsArray;
-
-  return NextResponse.json(filteredProducts);
+export async function GET() {
+  return NextResponse.json(productsArray);
 }
 
 export async function POST(request: Request) {
@@ -91,7 +33,6 @@ export async function POST(request: Request) {
       description: "",
       discountPercentage: 0,
       rating: 0,
-      stock: 99,
       tags: [],
       brand: "",
       sku: `SKU-${Date.now()}`,
