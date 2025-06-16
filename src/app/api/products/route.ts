@@ -47,13 +47,24 @@ interface Product {
 const productShema = z.object({
   title: z.string().min(2, "Название слишком короткое"),
   category: z.string().optional(),
-  price: z.number().positive("Цена должна быть выше 0")
+  price: z.number().positive("Цена должна быть выше 0"),
 });
 
-const productsArray: ProductsArray = products.products as Product[]
+const productsArray: ProductsArray = products.products as Product[];
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
+  const mode = searchParams.get("mode");
+  if (mode === "count-categories") {
+    const uniqueCategories = [
+      ...new Set(
+        productsArray
+          .map((product) => product.category)
+          .filter(Boolean)
+      )
+    ]
+    return NextResponse.json({categories: uniqueCategories})
+  }
 
   const category = searchParams.get("category");
   const filteredProducts = category
@@ -94,7 +105,7 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
-    void error
+    void error;
     return NextResponse.json(
       { error: "Ошибка при создании продукта" },
       { status: 500 }
