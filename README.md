@@ -132,4 +132,4 @@ npm install
 npm run dev
 ```
 
-API будет доступно по адрессу: http://localhost:3000/api
+API будет доступно по адрессу: https://api-for-shop.vercel.app
